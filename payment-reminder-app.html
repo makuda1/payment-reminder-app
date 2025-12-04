@@ -3,102 +3,83 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Payment Reminder</title>
+<title>48h Reminder — Brighter Victory Phones</title>
 <style>
   html,body { height:100%; margin:0; font-family: Inter, Arial, sans-serif; -webkit-user-select:none; user-select:none; }
-  body { display:flex; align-items:center; justify-content:center; background:#b71c1c; color:#fff; }
-  .wrap { width:100%; max-width:980px; padding:26px; text-align:center; }
-  .title { font-size:46px; font-weight:800; margin-bottom:10px; letter-spacing:0.4px; }
-  .subtitle { font-size:20px; margin-bottom:16px; }
-  .count { font-size:64px; font-weight:900; margin:24px 0; background:rgba(0,0,0,0.12); padding:18px 28px; border-radius:12px; display:inline-block; }
-  .msg { font-size:20px; margin:10px 0 20px 0; font-weight:600; }
-  .btn-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
-  .btn {
-    text-decoration:none; padding:14px 20px; border-radius:10px;
-    font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.2);
-    font-size:18px; display:inline-block;
-  }
-  .call-btn { background:#fff; color:#b71c1c; }
-  .pay-btn { background:#ffd900; color:#000; }
-  .small { font-size:14px; opacity:0.9; margin-top:22px; }
-  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  body { display:flex; align-items:center; justify-content:center; background:#fff; color:#111; }
+  .wrap { width:100%; max-width:980px; padding:28px; box-sizing:border-box; text-align:center; border:8px solid #b71c1c; border-radius:12px; }
+  .company { font-size:22px; font-weight:900; color:#b71c1c; margin-bottom:12px; }
+  .header { background:#b71c1c; color:#fff; padding:14px 18px; border-radius:8px; font-size:20px; font-weight:800; }
+  .title { font-size:30px; font-weight:800; margin:18px 0 6px; color:#b71c1c; }
+  .subtitle { font-size:18px; margin-bottom:12px; color:#333; }
+  .count { font-size:48px; font-weight:900; margin:18px 0; color:#000; background:rgba(183,28,28,0.06); padding:16px 24px; border-radius:8px; display:inline-block; }
+  .msg { font-size:16px; margin:10px 0 18px; color:#333; }
+  .info { font-size:16px; margin:6px 0; }
+  .strong { font-weight:800; color:#000; }
+  .btn-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+  .btn { text-decoration:none; padding:12px 18px; border-radius:10px; font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.12); font-size:16px; display:inline-block; }
+  .pay { background:#ffd54f; color:#000; }
+  .call { background:#fff; color:#b71c1c; border:2px solid #b71c1c; }
+  .close { background:#e0e0e0; color:#111; }
+  .small { font-size:13px; color:#444; margin-top:14px; }
 </style>
 </head>
 <body>
   <div class="wrap">
+    <div class="company">Brighter Victory Phones</div>
+    <div class="header">PAYMENT REMINDER — 48 HOURS</div>
     <div class="title">⚠ URGENT: FINAL REMINDER</div>
-    <div class="subtitle">
-      This device will enter <strong>RESTRICTED MODE</strong> in <strong>48 hours</strong>.
-    </div>
+    <div class="subtitle">This device will enter <strong>RESTRICTED MODE</strong> in <strong>48 hours</strong>.</div>
 
     <div id="countdown" class="count">48:00:00</div>
+    <div class="msg">Avoid interruption — complete your payment now.</div>
 
-    <div class="msg">
-      Avoid interruption — complete your payment now.
-    </div>
+    <div class="info"><span class="strong">MoMo (Pay):</span> 0506899997</div>
+    <div class="info"><span class="strong">Support Line:</span> 0558340888</div>
 
     <div class="btn-row">
-      <a class="btn pay-btn" href="#" onclick="openMoMo();return false;">
-        PAY NOW (MoMo: 0506899997)
-      </a>
-
-      <a class="btn call-btn" href="tel:0558340888">
-        CALL SUPPORT: 0558340888
-      </a>
+      <a class="btn pay" href="#" onclick="openMoMo();return false;">PAY NOW</a>
+      <a class="btn call" href="tel:0558340888">CALL SUPPORT</a>
+      <a class="btn close" href="#" onclick="closeReminder();return false;">CLOSE REMINDER</a>
     </div>
 
-    <div class="small">
-      If you have already paid, call 0558340888 for instant verification.
-    </div>
+    <div class="small">If you already paid, call 0558340888 for verification.</div>
   </div>
 
 <script>
 (function(){
-  const COUNTDOWN_MS = 48 * 60 * 60 * 1000; // 48 hours
-  const KEY = 'payment_reminder_start_ts_v1';
+  const DURATION = 48*60*60*1000;
+  const KEY = 'reminder48_bvp';
 
-  function now() { return Date.now(); }
-
-  // Initialize timer start
+  function now(){ return Date.now(); }
   let start = localStorage.getItem(KEY);
-  if (!start) {
-    start = now();
-    localStorage.setItem(KEY, start);
-  } else {
-    start = parseInt(start, 10);
+  if(!start){ start = now(); localStorage.setItem(KEY,start); } else { start = parseInt(start,10); }
+
+  function fmt(ms){ 
+      const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+      return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
   }
 
+  function remain(){ return Math.max(0, DURATION-(now()-start)); }
   const el = document.getElementById('countdown');
 
-  function fmt(ms) {
-    const sec = Math.floor(ms/1000);
-    const h = Math.floor(sec/3600);
-    const m = Math.floor((sec % 3600)/60);
-    const s = sec % 60;
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  function tick(){ 
+    const r=remain(); 
+    el.textContent=fmt(r); 
+    if(r<=0){ clearInterval(iv); }
   }
 
-  function tick() {
-    const rem = Math.max(0, COUNTDOWN_MS - (now() - start));
-    el.textContent = fmt(rem);
+  const iv=setInterval(tick,1000); tick();
 
-    if (rem <= 0) {
-      document.querySelector('.subtitle').innerHTML =
-        "<strong>This device is scheduled to enter RESTRICTED MODE now.</strong>";
-      clearInterval(iv);
-    }
-  }
-
-  const iv = setInterval(tick, 1000);
-  tick();
-
-  // Open MoMo instructions (simple version)
-  window.openMoMo = function() {
-    alert("To Pay with MoMo:\n1. Dial *170#\n2. Choose 'Send Money'\n3. Enter 0506899997\n4. Enter amount\n5. Confirm payment.\n\nCall 0558340888 after payment.");
+  window.openMoMo=function(){
+    alert("Pay MoMo → 0506899997\nThen call 0558340888.");
   };
 
-  // Disable right click / avoid escape
-  document.addEventListener('contextmenu', e => e.preventDefault());
+  window.closeReminder=function(){
+    try{window.close();}catch(e){}
+    try{history.back();}catch(e){}
+  };
+
 })();
 </script>
 </body>
