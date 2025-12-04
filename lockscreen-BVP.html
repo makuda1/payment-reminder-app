@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Device Locked — Brighter Victory Phones</title>
+<style>
+  html,body { height:100%; margin:0; font-family:Inter, Arial; background:#8b0000; color:#fff; }
+  body { display:flex; justify-content:center; align-items:center; }
+  .wrap { text-align:center; padding:20px; max-width:800px; }
+  .company { font-size:24px; font-weight:900; margin-bottom:16px; }
+  .lock { font-size:56px; font-weight:900; margin:10px 0; }
+  .title { font-size:24px; margin:12px 0; }
+  .msg { font-size:18px; margin:12px 0; }
+  .info { font-size:20px; font-weight:700; margin:6px 0; }
+  .btn { text-decoration:none; background:#fff; color:#8b0000; padding:14px 22px; border-radius:10px; font-weight:900; display:inline-block; margin-top:18px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="company">Brighter Victory Phones</div>
+    <div class="lock">🔒 DEVICE LOCKED</div>
+    <div class="title">This device has been restricted due to non-payment.</div>
+    <div class="msg">To restore access, pay and contact support.</div>
+    <div class="info">MoMo Payment: 0506899997</div>
+    <div class="info">Support: 0558340888</div>
+
+    <a class="btn" href="tel:0558340888">CALL SUPPORT</a>
+  </div>
+
+<script>
+(function(){
+  document.addEventListener('contextmenu', e=>e.preventDefault());
+  try{
+    history.pushState(null,null,location.href); 
+    window.addEventListener('popstate',()=>{ history.pushState(null,null,location.href); });
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
